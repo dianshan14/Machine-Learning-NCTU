@@ -1,3 +1,8 @@
+"""
+This code has not been properly organized yet.
+"""
+
+
 import argparse
 import os
 
@@ -218,19 +223,17 @@ def classify_subject_kernel_pca(X_train, y_train, X_test, y_test, projection_mat
 def k_NN(z_train, y_train, z_test, y_test, k):
     classify = distance.cdist(z_test, z_train, metric='sqeuclidean')
     print('classify', classify.shape)
-    # 最小距離的 index，認為跟哪個 z_train 最接近
+    # the most close to which z_train
     sort_index = np.argsort(classify, axis=1) # 30, 135
     print('sort index', sort_index.shape)
 
     # k-NN
-    # 找算完距離的結果的那些 z_train 的真實 label 是什麼
-    # y_test * y_trains
+    # map to true label of those z_train
     extended_y = np.tile(y_train, reps=(len(y_test), 1)) # 30, 135
-    # 找到真實 label 了，並經過排序了
+    # already get true label and sorted
     sorted_y = np.array([arr[sort_index[i]] for i, arr in enumerate(extended_y)])
-    # different size
-    # count first k elements
-    # 算前 k 個誰出現最多當作分類結果 (所以算法要依賴 train 的 label)
+    # issue: different size in a ndarray (solved)
+    # get the most frequent one in top-k closeness
     counts = np.array([np.bincount(arr[:k]) for arr in sorted_y])
     # the most frequent as result
     result = np.array([np.argmax(arr) for arr in counts])
